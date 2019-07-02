@@ -6,13 +6,60 @@
   <%= t('spree_slider.title') %>
 <% end %>
 
+<% content_for :table_filter do %>
+  <div data-hook="admin_slides_index_search">
+    <%= search_form_for [:admin, @search] do |f| %>
+      <div class="row">
+        <div class="col-xs-12 col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_name_cont, Spree.t(:name) %>
+            <%= f.text_field :name_cont, class: 'form-control js-quick-search-target js-filterable' %>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_product_name_cont, Spree.t(:product) %>
+            <%= f.text_field :product_name_cont, class: 'form-control js-filterable' %>
+          </div>
+        </div>
+
+        <div class="col-xs-12 col-md-4">
+          <div class="form-group">
+            <%= label_tag :q_slide_locations_id_eq, Spree.t(:location) %>
+            <%= f.select :slide_locations_id_eq, Spree::SlideLocation.all.map {|l| [l.name, l.id]}, { include_blank: true }, class: 'select2' %>
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-xs-12 col-md-4">
+          <div class="form-group">
+            <div class="checkbox">
+              <%= label_tag 'q_published_eq' do %>
+                <%= f.check_box :published_eq, {checked: (params[:q][:published_eq] == '1')}, '1', '' %>
+                <%= Spree.t(:show_only_published) %>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div data-hook="admin_orders_index_search_buttons" class="form-actions">
+        <%= button Spree.t(:filter_results), 'search' %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
 <table class="table sortable" id="listing_slides" data-hook data-sortable-link="<%= update_positions_admin_slides_url %>" >
   <thead>
   <tr data-hook="admin_slides_index_headers">
     <th colspan="2"><%= Spree.t(:image) %></th>
-    <th><%= Spree.t(:name) %></th>
-    <th><%= Spree.t(:product) %></th>
-    <th><%= Spree.t(:published) %></th>
+    <th><%= sort_link @search, :name, Spree.t(:name) %></th>
+    <th><%= sort_link @search, :product_name, Spree.t(:product) %></th>
+    <th><%= Spree.t(:locations) %></th>
+    <th><%= sort_link @search, :published, Spree.t(:published) %></th>
     <th data-hook="admin_slides_index_header_actions" class="actions"></th>
   </tr>
   </thead>
@@ -25,6 +72,7 @@
       <td class="align-center"><%= image_tag slide.slide_image.url, style: 'width: 120px; height: auto;' %></td>
       <td class="align-center"><%= link_to slide.name, object_url(slide) %></td>
       <td class="align-center"><%= link_to slide.product.name, object_url(slide) unless slide.product_id.blank? %></td>
+      <td class="align-center"><%= slide.slide_locations.map(&:name).join(', ') %></td>
       <td class="align-center"><%= slide.published ? Spree.t(:say_yes) : Spree.t(:say_no) %></td>
       <td data-hook="admin_slides_index_row_actions" class="actions">
         <%= link_to_edit slide, no_text: true, class: 'edit' %>
@@ -36,3 +84,4 @@
   </tbody>
 </table>
 
+<%= render 'spree/admin/shared/index_table_options', collection: @slides, simple: true %>

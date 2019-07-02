@@ -1,5 +1,4 @@
-class Spree::Slide < ActiveRecord::Base
-
+class Spree::Slide < Spree::Base
   has_and_belongs_to_many :slide_locations,
                           class_name: 'Spree::SlideLocation',
                           join_table: 'spree_slide_slide_locations'
@@ -14,6 +13,9 @@ class Spree::Slide < ActiveRecord::Base
   scope :location, -> (location) { joins(:slide_locations).where('spree_slide_locations.name = ?', location) }
 
   belongs_to :product, touch: true, optional: true
+
+  self.whitelisted_ransackable_associations = %w[product slide_locations]
+  self.whitelisted_ransackable_attributes = %w[name published]
 
   def initialize(attrs = nil)
     attrs ||= { published: true }

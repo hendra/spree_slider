@@ -4,7 +4,11 @@ module Spree
       respond_to :html
 
       def index
-        @slides = Spree::Slide.order(:position)
+        params[:q] ||= {}
+        @search = Spree::Slide.ransack(params[:q])
+        @slides = @search.result.
+                  page(params[:page]).
+                  per(params[:per_page] || 15)
       end
 
       private

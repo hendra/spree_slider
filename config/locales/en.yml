@@ -16,6 +16,11 @@ en:
     models:
       spree/slide: "Slide"
 
+  spree:
+    locations: Locations
+    published: Published
+    show_only_published: Show only published
+
   spree_slider:
     config_name: "Spree Slider"
     config_description: "Manage Spree Slider contents"
