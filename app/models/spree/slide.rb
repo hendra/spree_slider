@@ -11,6 +11,16 @@ class Spree::Slide < Spree::Base
 
   scope :published, -> { where(published: true).order('position ASC') }
   scope :location, -> (location) { joins(:slide_locations).where('spree_slide_locations.name = ?', location) }
+  scope :located_on, -> (*locations) do
+    scope = all
+    locations.each_with_index do |location, i|
+      scope = scope.
+                joins("join spree_slide_slide_locations ssl#{i} on ssl#{i}.slide_id = spree_slides.id").
+                joins("join spree_slide_locations sl#{i} on sl#{i}.id = ssl#{i}.slide_location_id").
+                where("sl#{i}.name = ?", location)
+    end
+    scope
+  end
 
   belongs_to :product, touch: true, optional: true
 
