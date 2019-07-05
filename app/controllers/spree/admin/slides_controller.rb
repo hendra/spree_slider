@@ -5,6 +5,7 @@ module Spree
 
       def index
         params[:q] ||= {}
+        params[:q][:s] ||= 'position asc'
         @search = Spree::Slide.ransack(params[:q])
         @slides = @search.result.
                   page(params[:page]).

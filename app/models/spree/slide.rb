@@ -15,7 +15,7 @@ class Spree::Slide < Spree::Base
   belongs_to :product, touch: true, optional: true
 
   self.whitelisted_ransackable_associations = %w[product slide_locations]
-  self.whitelisted_ransackable_attributes = %w[name published]
+  self.whitelisted_ransackable_attributes = %w[name published position]
 
   def initialize(attrs = nil)
     attrs ||= { published: true }
