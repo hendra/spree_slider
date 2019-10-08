@@ -1,13 +1,9 @@
 class Spree::Slide < Spree::Base
+  include Rails.application.config.use_paperclip ? Configuration::Paperclip : Configuration::ActiveStorage
+
   has_and_belongs_to_many :slide_locations,
                           class_name: 'Spree::SlideLocation',
                           join_table: 'spree_slide_slide_locations'
-
-  has_attached_file :image,
-                    url: '/spree/slides/:id/:style/:basename.:extension',
-                    path: ':rails_root/public/spree/slides/:id/:style/:basename.:extension',
-                    convert_options: { all: '-strip -auto-orient -colorspace sRGB' }
-  validates_attachment :image, content_type: { content_type: ["image/jpg", "image/jpeg", "image/png", "image/gif"] }
 
   scope :published, -> { where(published: true).order('position ASC') }
   scope :location, -> (location) { joins(:slide_locations).where('spree_slide_locations.name = ?', location) }
@@ -41,6 +37,7 @@ class Spree::Slide < Spree::Base
   end
 
   def slide_image
-    !image.file? && product.present? && product.images.any? ? product.images.first.attachment : image
+    return image if image_present?
+    product&.images&.first&.attachment
   end
 end

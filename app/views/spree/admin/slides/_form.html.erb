@@ -1,3 +1,4 @@
+<% slide = f.object %>
 <div class="row">
   <div class="col-md-2">
     <%= f.field_container :position do %>
@@ -56,13 +57,12 @@
 
   <div class="col-md-6">
     <%= f.field_container :image do %>
-      <% if f.object.image? %>
-        <p>
-          <%= label_tag t(:preview) %>
-          <br>
-          <%= image_tag f.object.image.url, class: 'img-responsive' %>
-        </p>
-      <% end %>
+      <p>
+        <%= label_tag t(:preview) %>
+        <br>
+        <% image = slide.slide_image_variant %>
+        <%= image_tag(main_app.url_for(image), alt: slide.slide_name, style: 'width: 120px; height: auto;') if image %>
+      </p>
     <% end %>
   </div>
 

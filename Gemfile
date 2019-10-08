@@ -1,5 +1,3 @@
-source 'http://rubygems.org'
-
 source 'https://rubygems.org'
 
 spree_version = 'master'
